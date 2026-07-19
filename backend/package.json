@@ -1,0 +1,24 @@
+{
+  "name": "sikon-papua-barat-daya",
+  "version": "1.0.0",
+  "description": "Sistem Informasi Kontrak Otomatis Pekerjaan Konstruksi - Pemprov Papua Barat Daya",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^12.11.1",
+    "cors": "^2.8.6",
+    "docx": "^9.7.1",
+    "express": "^4.22.2",
+    "uuid": "^14.0.1"
+  }
+}

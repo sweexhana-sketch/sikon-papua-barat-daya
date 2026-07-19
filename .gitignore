@@ -1,0 +1,19 @@
+# Dependencies
+backend/node_modules/
+node_modules/
+
+# Database temporary files
+*.db-wal
+*.db-shm
+
+# Generated files
+backend/generated/
+*.docx
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env

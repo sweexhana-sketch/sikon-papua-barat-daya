@@ -1,0 +1,12 @@
+[
+  {
+    "id": "ppk-dispangtan",
+    "nama": "",
+    "nip": "",
+    "jabatan": "Pejabat Pembuat Komitmen (PPK)",
+    "satuan_kerja": "Dinas Pangan dan Pertanian Provinsi Papua Barat Daya",
+    "alamat": "Kota Sorong, Papua Barat Daya",
+    "sk_pengangkatan": { "nomor": "", "tanggal": "", "tentang": "Pengangkatan Pejabat Pembuat Komitmen" },
+    "created_at": "2026-07-17T00:00:00.000Z"
+  }
+]

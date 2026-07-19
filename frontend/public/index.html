@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SIKON • Sistem Kontrak Otomatis — Papua Barat Daya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: { 50:'#eefcf6',100:'#d5f7e8',200:'#adeed3',300:'#78dfb8',400:'#41c898',500:'#1ead7c',600:'#128b64',700:'#106f53',800:'#115844',900:'#0d3d31' },
+          sea:   { 50:'#eff8ff',100:'#dcf0ff',500:'#0f7fb0',600:'#0c6690',700:'#0a4f70',900:'#062f43' }
+        },
+        fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] }
+      }
+    }
+  }
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', ui-sans-serif, system-ui;
+    background: linear-gradient(135deg, #0d3d31 0%, #106f53 40%, #0a4f70 100%);
+    min-height: 100vh;
+  }
+
+
+  /* ── App shell (post-login) ── */
+  .app-shell {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #f4faf7 0%, #eef6f4 100%);
+  }
+  .topbar {
+    background: #fff;
+    border-bottom: 1px solid #e6efe9;
+    box-shadow: 0 1px 4px rgba(16,60,45,.06);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #e6efe9;
+    border-radius: 16px;
+    box-shadow: 0 1px 2px rgba(16,60,45,.04), 0 8px 24px -12px rgba(16,60,45,.08);
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid #e6efe9;
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 2px rgba(16,60,45,.04), 0 4px 12px -6px rgba(16,60,45,.07);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px -6px rgba(16,60,45,.14);
+  }
+
+  /* ── Wizard ── */
+  .step-dot { transition: all .2s ease }
+  ::-webkit-scrollbar { width: 8px; height: 8px }
+  ::-webkit-scrollbar-thumb { background: #c8e2d6; border-radius: 8px }
+  .field-label { font-size: .78rem; font-weight: 600; color: #3f5d51; letter-spacing: .01em }
+  input, select, textarea { transition: border-color .15s ease, box-shadow .15s ease }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #1ead7c;
+    box-shadow: 0 0 0 3px rgba(30,173,124,.14);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { animation: fadeIn .3s ease forwards; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { animation: spin 1s linear infinite; display: inline-block; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="app.js"></script>
+</body>
+</html>

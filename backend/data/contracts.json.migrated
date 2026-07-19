@@ -1,0 +1,82 @@
+[
+  {
+    "id": "1ed5a36f-e508-411c-ae60-5f97ccc2ad13",
+    "created_at": "2026-07-18T03:12:51.887Z",
+    "package_id": null,
+    "vendor_id": "vendor-papua-paradise",
+    "official_id": "ppk-dispangtan",
+    "nama_paket": "Jasa Keamanan Kantor Gubernur Papua Barat Daya",
+    "nilai_kontrak": 350000000,
+    "jenis_pekerjaan": "jasa_lainnya",
+    "jenis_dokumen": "SURAT_PERJANJIAN",
+    "jenis_kontrak": "lumsum",
+    "files": [
+      "SURAT_PERJANJIAN.docx",
+      "SSKK.docx",
+      "SSUK.docx",
+      "SPMK.docx"
+    ],
+    "out_dir": "1784344371553",
+    "warnings": [
+      "Kontrak Jasa Lainnya bernilai di atas ambang SPK umumnya mensyaratkan Jaminan Pelaksanaan. Pastikan data jaminan (nomor, penerbit, masa berlaku) dilengkapi sebelum kontrak difinalkan."
+    ]
+  },
+  {
+    "id": "6d20afca-39e6-458f-9109-8c0552cd7065",
+    "created_at": "2026-07-18T03:12:52.058Z",
+    "package_id": null,
+    "vendor_id": null,
+    "official_id": "ppk-dispangtan",
+    "nama_paket": "Jasa Sewa Kendaraan Operasional Distrik",
+    "nilai_kontrak": 60000000,
+    "jenis_pekerjaan": "jasa_lainnya",
+    "jenis_dokumen": "SPK",
+    "jenis_kontrak": "harga_satuan",
+    "files": [
+      "SPK.docx",
+      "SPMK.docx"
+    ],
+    "out_dir": "1784344371954",
+    "warnings": []
+  },
+  {
+    "id": "4f3230ab-a37b-46d9-9725-73adc12b099e",
+    "created_at": "2026-07-18T08:56:29.564Z",
+    "package_id": null,
+    "vendor_id": "vendor-papua-paradise",
+    "official_id": "ppk-dispangtan",
+    "nama_paket": "Kajian Akademik Redistribusi Dana Otsus Papua Barat Daya",
+    "nilai_kontrak": 275000000,
+    "jenis_pekerjaan": "konsultansi_non_konstruksi",
+    "jenis_dokumen": "SURAT_PERJANJIAN",
+    "jenis_kontrak": "waktu_penugasan",
+    "files": [
+      "SURAT_PERJANJIAN.docx",
+      "SSKK.docx",
+      "SSUK.docx",
+      "SPMK.docx"
+    ],
+    "out_dir": "1784364989271",
+    "warnings": [
+      "Kontrak Waktu Penugasan sebaiknya melampirkan rincian billing rate per personil dan estimasi orang-bulan (person-month) pada SSKK/lampiran teknis."
+    ]
+  },
+  {
+    "id": "6ff8541e-1711-4d88-b629-e4cec4e8621a",
+    "created_at": "2026-07-18T08:56:29.673Z",
+    "package_id": null,
+    "vendor_id": null,
+    "official_id": "ppk-dispangtan",
+    "nama_paket": "Pelatihan Manajemen Keuangan Daerah",
+    "nilai_kontrak": 75000000,
+    "jenis_pekerjaan": "konsultansi_non_konstruksi",
+    "jenis_dokumen": "SPK",
+    "jenis_kontrak": "lumsum",
+    "files": [
+      "SPK.docx",
+      "SPMK.docx"
+    ],
+    "out_dir": "1784364989610",
+    "warnings": []
+  }
+]

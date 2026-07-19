@@ -1,0 +1,26 @@
+[
+  {
+    "id": "vendor-papua-paradise",
+    "nama": "CV. Papua Paradise",
+    "jenis": "badan_usaha",
+    "alamat": "Kota Sorong, Papua Barat Daya",
+    "npwp": "",
+    "email": "",
+    "telp": "",
+    "akta_notaris": { "nomor": "", "tanggal": "", "notaris": "" },
+    "wakil": { "nama": "", "jabatan": "Direktur" },
+    "created_at": "2026-07-17T00:00:00.000Z"
+  },
+  {
+    "id": "vendor-arbah-bersinar",
+    "nama": "CV. Arbah Bersinar",
+    "jenis": "badan_usaha",
+    "alamat": "Kota Sorong, Papua Barat Daya",
+    "npwp": "",
+    "email": "",
+    "telp": "",
+    "akta_notaris": { "nomor": "", "tanggal": "", "notaris": "" },
+    "wakil": { "nama": "", "jabatan": "Direktur" },
+    "created_at": "2026-07-17T00:00:00.000Z"
+  }
+]
