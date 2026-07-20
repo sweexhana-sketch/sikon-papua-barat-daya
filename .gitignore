@@ -6,9 +6,11 @@ node_modules/
 *.db-wal
 *.db-shm
 
-# Generated files
+# Generated files (output kontrak - jangan di-commit)
 backend/generated/
-*.docx
+
+# Jangan ignore *.docx secara global karena templates_static perlu dicommit
+# *.docx
 *.zip
 
 # OS files
