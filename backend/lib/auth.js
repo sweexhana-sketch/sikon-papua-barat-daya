@@ -24,12 +24,11 @@ async function seedAdminIfEmpty() {
   }
 }
 
-// Jalankan seed admin setelah DB siap (non-blocking)
-// Menggunakan db.pool agar menunggu ensureReady selesai
-db.pool.query("SELECT 1").then(() => seedAdminIfEmpty()).catch(() => {});
-
 /* ─── Auth functions ─────────────────────────────────────────────────────── */
 async function login(username, password) {
+  // Jalankan seed admin secara lazy saat percobaan login pertama kali
+  await seedAdminIfEmpty();
+
   const user = await db.findUserByUsername(username);
   if (!user) return { ok: false, error: "Username atau password salah" };
 
