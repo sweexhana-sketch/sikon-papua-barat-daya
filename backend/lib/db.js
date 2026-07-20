@@ -1,5 +1,6 @@
 const { Pool } = require("@neondatabase/serverless");
-const { v4: uuid } = require("uuid");
+const crypto = require("crypto");
+const uuid = () => crypto.randomUUID();
 
 const rawConnStr = process.env.DATABASE_URL ||
   "postgresql://neondb_owner:npg_xZKIEB02Vhpt@ep-polished-dust-awfz5230-pooler.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require";
