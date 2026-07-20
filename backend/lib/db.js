@@ -1,51 +1,70 @@
 const { Pool } = require("pg");
 const { v4: uuid } = require("uuid");
 
-const connectionString = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_xZKIEB02Vhpt@ep-polished-dust-awfz5230-pooler.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+// Hapus channel_binding=require karena tidak didukung oleh pg library standar
+const rawConnStr = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_xZKIEB02Vhpt@ep-polished-dust-awfz5230-pooler.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require";
+const connectionString = rawConnStr.replace("&channel_binding=require", "").replace("?channel_binding=require", "");
 
 const pool = new Pool({
   connectionString,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
+  connectionTimeoutMillis: 10000,
+  idleTimeoutMillis: 30000,
+  max: 5,
 });
 
+pool.on("error", (err) => {
+  console.error("[db] Pool error:", err.message);
+});
+
+// Test koneksi saat startup
+pool.query("SELECT 1")
+  .then(() => console.log("[db] Koneksi ke Neon PostgreSQL berhasil!"))
+  .catch((e) => console.error("[db] GAGAL koneksi ke database:", e.message));
+
 async function initDB() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS vendors (
-      id          VARCHAR(255) PRIMARY KEY,
-      created_at  VARCHAR(255) NOT NULL,
-      updated_at  VARCHAR(255),
-      data        TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS officials (
-      id          VARCHAR(255) PRIMARY KEY,
-      created_at  VARCHAR(255) NOT NULL,
-      updated_at  VARCHAR(255),
-      data        TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS packages (
-      id          VARCHAR(255) PRIMARY KEY,
-      created_at  VARCHAR(255) NOT NULL,
-      updated_at  VARCHAR(255),
-      data        TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS contracts (
-      id          VARCHAR(255) PRIMARY KEY,
-      created_at  VARCHAR(255) NOT NULL,
-      updated_at  VARCHAR(255),
-      data        TEXT NOT NULL
-    );
-    CREATE TABLE IF NOT EXISTS users (
-      id          VARCHAR(255) PRIMARY KEY,
-      created_at  VARCHAR(255) NOT NULL,
-      updated_at  VARCHAR(255),
-      username    VARCHAR(255) UNIQUE NOT NULL,
-      password_hash VARCHAR(255) NOT NULL,
-      role        VARCHAR(255) NOT NULL DEFAULT 'operator',
-      nama        VARCHAR(255)
-    );
-  `);
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS vendors (
+        id          VARCHAR(255) PRIMARY KEY,
+        created_at  VARCHAR(255) NOT NULL,
+        updated_at  VARCHAR(255),
+        data        TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS officials (
+        id          VARCHAR(255) PRIMARY KEY,
+        created_at  VARCHAR(255) NOT NULL,
+        updated_at  VARCHAR(255),
+        data        TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS packages (
+        id          VARCHAR(255) PRIMARY KEY,
+        created_at  VARCHAR(255) NOT NULL,
+        updated_at  VARCHAR(255),
+        data        TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS contracts (
+        id          VARCHAR(255) PRIMARY KEY,
+        created_at  VARCHAR(255) NOT NULL,
+        updated_at  VARCHAR(255),
+        data        TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS users (
+        id          VARCHAR(255) PRIMARY KEY,
+        created_at  VARCHAR(255) NOT NULL,
+        updated_at  VARCHAR(255),
+        username    VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        role        VARCHAR(255) NOT NULL DEFAULT 'operator',
+        nama        VARCHAR(255)
+      );
+    `);
+    console.log("[db] Tabel berhasil diinisialisasi.");
+  } catch (err) {
+    console.error("[db] initDB gagal:", err.message);
+  }
 }
-initDB().catch(console.error);
+initDB();
 
 async function readAll(table) {
   const result = await pool.query(`SELECT data FROM ${table} ORDER BY created_at ASC`);
