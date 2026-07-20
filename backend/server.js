@@ -14,7 +14,13 @@ app.use("/api/auth", authRouter);
 // API routes (semua dilindungi auth di dalam router)
 app.use("/api", apiRouter);
 
-// Serve frontend
+// Global error handler - selalu kembalikan JSON, tidak pernah plain text
+app.use((err, req, res, next) => {
+  console.error("[error]", err.message, err.stack);
+  res.status(err.status || 500).json({ error: err.message || "Internal server error" });
+});
+
+// Serve frontend (hanya dipakai saat development, Vercel pakai static CDN)
 const FRONTEND_DIR = path.join(__dirname, "..", "frontend", "public");
 app.use(express.static(FRONTEND_DIR));
 app.get("*", (req, res) => {
