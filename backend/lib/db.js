@@ -1,4 +1,4 @@
-const { Pool } = require("pg");
+const { Pool } = require("@neondatabase/serverless");
 const { v4: uuid } = require("uuid");
 
 const rawConnStr = process.env.DATABASE_URL ||
