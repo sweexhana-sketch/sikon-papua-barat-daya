@@ -18,14 +18,15 @@ async function seedAdminIfEmpty() {
         nama: "Administrator",
       });
       console.log("[auth] User admin default dibuat. Username: admin | Password: admin123");
-      console.log("[auth] ⚠  SEGERA ganti password default di production!");
     }
   } catch (e) {
     console.error("[auth] Gagal mengecek/membuat admin default:", e.message);
   }
 }
-// Beri jeda sedikit agar initDB punya waktu membuat tabel (meski di production Vercel kita harusnya pakai migrasi)
-setTimeout(seedAdminIfEmpty, 2000);
+
+// Jalankan seed admin setelah DB siap (non-blocking)
+// Menggunakan db.pool agar menunggu ensureReady selesai
+db.pool.query("SELECT 1").then(() => seedAdminIfEmpty()).catch(() => {});
 
 /* ─── Auth functions ─────────────────────────────────────────────────────── */
 async function login(username, password) {

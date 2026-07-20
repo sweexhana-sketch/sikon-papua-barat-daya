@@ -1,9 +1,12 @@
 const { Pool } = require("pg");
 const { v4: uuid } = require("uuid");
 
-// Hapus channel_binding=require karena tidak didukung oleh pg library standar
-const rawConnStr = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_xZKIEB02Vhpt@ep-polished-dust-awfz5230-pooler.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require";
-const connectionString = rawConnStr.replace("&channel_binding=require", "").replace("?channel_binding=require", "");
+const rawConnStr = process.env.DATABASE_URL ||
+  "postgresql://neondb_owner:npg_xZKIEB02Vhpt@ep-polished-dust-awfz5230-pooler.c-12.us-east-1.aws.neon.tech/neondb?sslmode=require";
+const connectionString = rawConnStr
+  .replace("&channel_binding=require", "")
+  .replace("?channel_binding=require&", "?")
+  .replace("?channel_binding=require", "");
 
 const pool = new Pool({
   connectionString,
@@ -17,14 +20,13 @@ pool.on("error", (err) => {
   console.error("[db] Pool error:", err.message);
 });
 
-// Test koneksi saat startup
-pool.query("SELECT 1")
-  .then(() => console.log("[db] Koneksi ke Neon PostgreSQL berhasil!"))
-  .catch((e) => console.error("[db] GAGAL koneksi ke database:", e.message));
+/* ─── Singleton init promise ─────────────────────────────────────────────── */
+// Memastikan tabel selalu ada sebelum query apapun dijalankan
+let _initPromise = null;
 
-async function initDB() {
-  try {
-    await pool.query(`
+function ensureReady() {
+  if (!_initPromise) {
+    _initPromise = pool.query(`
       CREATE TABLE IF NOT EXISTS vendors (
         id          VARCHAR(255) PRIMARY KEY,
         created_at  VARCHAR(255) NOT NULL,
@@ -58,20 +60,25 @@ async function initDB() {
         role        VARCHAR(255) NOT NULL DEFAULT 'operator',
         nama        VARCHAR(255)
       );
-    `);
-    console.log("[db] Tabel berhasil diinisialisasi.");
-  } catch (err) {
-    console.error("[db] initDB gagal:", err.message);
+    `).then(() => {
+      console.log("[db] Tabel siap.");
+    }).catch((err) => {
+      console.error("[db] Gagal inisialisasi tabel:", err.message);
+      _initPromise = null; // reset agar bisa dicoba ulang
+      throw err;
+    });
   }
+  return _initPromise;
 }
-initDB();
 
 async function readAll(table) {
+  await ensureReady();
   const result = await pool.query(`SELECT data FROM ${table} ORDER BY created_at ASC`);
   return result.rows.map((r) => JSON.parse(r.data));
 }
 
 async function insert(table, record) {
+  await ensureReady();
   const id = uuid();
   const now = new Date().toISOString();
   const full = { id, created_at: now, ...record };
@@ -83,6 +90,7 @@ async function insert(table, record) {
 }
 
 async function update(table, id, patch) {
+  await ensureReady();
   const rowResult = await pool.query(`SELECT data FROM ${table} WHERE id = $1`, [id]);
   if (rowResult.rows.length === 0) return null;
   const now = new Date().toISOString();
@@ -95,27 +103,32 @@ async function update(table, id, patch) {
 }
 
 async function remove(table, id) {
+  await ensureReady();
   const info = await pool.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
   return info.rowCount > 0;
 }
 
 async function findById(table, id) {
+  await ensureReady();
   if (!id) return null;
   const rowResult = await pool.query(`SELECT data FROM ${table} WHERE id = $1`, [id]);
   return rowResult.rows.length > 0 ? JSON.parse(rowResult.rows[0].data) : null;
 }
 
 async function findUserByUsername(username) {
+  await ensureReady();
   const result = await pool.query(`SELECT * FROM users WHERE username = $1`, [username]);
   return result.rows.length > 0 ? result.rows[0] : null;
 }
 
 async function findUserById(id) {
+  await ensureReady();
   const result = await pool.query(`SELECT * FROM users WHERE id = $1`, [id]);
   return result.rows.length > 0 ? result.rows[0] : null;
 }
 
 async function insertUser({ username, password_hash, role = "operator", nama = "" }) {
+  await ensureReady();
   const id = uuid();
   const now = new Date().toISOString();
   await pool.query(
@@ -126,6 +139,7 @@ async function insertUser({ username, password_hash, role = "operator", nama = "
 }
 
 async function getAllUsers() {
+  await ensureReady();
   const result = await pool.query(`SELECT id, username, role, nama, created_at FROM users ORDER BY created_at ASC`);
   return result.rows;
 }
