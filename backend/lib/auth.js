@@ -1,64 +1,67 @@
 const bcrypt = require("bcryptjs");
-const { v4: uuid } = require("uuid");
+const jwt = require("jsonwebtoken");
 const db = require("./db");
 
-// In-memory token store: token -> { userId, expiresAt }
-const tokenStore = new Map();
-const TOKEN_TTL_MS = 8 * 60 * 60 * 1000; // 8 jam
+const JWT_SECRET = process.env.JWT_SECRET || "sikon-super-secret-key-change-this-in-production";
+const JWT_EXPIRES_IN = "8h";
 
 /* ─── Seed admin default jika belum ada user ────────────────────────────── */
-function seedAdminIfEmpty() {
-  const users = db.getAllUsers();
-  if (users.length === 0) {
-    const hash = bcrypt.hashSync("admin123", 10);
-    db.insertUser({
-      username: "admin",
-      password_hash: hash,
-      role: "admin",
-      nama: "Administrator",
-    });
-    console.log("[auth] User admin default dibuat. Username: admin | Password: admin123");
-    console.log("[auth] ⚠  SEGERA ganti password default di production!");
+async function seedAdminIfEmpty() {
+  try {
+    const users = await db.getAllUsers();
+    if (users.length === 0) {
+      const hash = bcrypt.hashSync("admin123", 10);
+      await db.insertUser({
+        username: "admin",
+        password_hash: hash,
+        role: "admin",
+        nama: "Administrator",
+      });
+      console.log("[auth] User admin default dibuat. Username: admin | Password: admin123");
+      console.log("[auth] ⚠  SEGERA ganti password default di production!");
+    }
+  } catch (e) {
+    console.error("[auth] Gagal mengecek/membuat admin default:", e.message);
   }
 }
-seedAdminIfEmpty();
+// Beri jeda sedikit agar initDB punya waktu membuat tabel (meski di production Vercel kita harusnya pakai migrasi)
+setTimeout(seedAdminIfEmpty, 2000);
 
 /* ─── Auth functions ─────────────────────────────────────────────────────── */
-function login(username, password) {
-  const user = db.findUserByUsername(username);
+async function login(username, password) {
+  const user = await db.findUserByUsername(username);
   if (!user) return { ok: false, error: "Username atau password salah" };
 
   const valid = bcrypt.compareSync(password, user.password_hash);
   if (!valid) return { ok: false, error: "Username atau password salah" };
 
-  const token = uuid();
-  tokenStore.set(token, {
-    userId: user.id,
-    expiresAt: Date.now() + TOKEN_TTL_MS,
-  });
+  const payload = {
+    id: user.id,
+    username: user.username,
+    role: user.role,
+    nama: user.nama
+  };
+
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
   return {
     ok: true,
     token,
-    user: { id: user.id, username: user.username, role: user.role, nama: user.nama },
+    user: payload,
   };
 }
 
 function verifyToken(token) {
   if (!token) return null;
-  const entry = tokenStore.get(token);
-  if (!entry) return null;
-  if (Date.now() > entry.expiresAt) {
-    tokenStore.delete(token);
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch (err) {
     return null;
   }
-  const user = db.findUserById(entry.userId);
-  if (!user) return null;
-  return { id: user.id, username: user.username, role: user.role, nama: user.nama };
 }
 
 function logout(token) {
-  tokenStore.delete(token);
+  // Stateless JWT: logout dilakukan di sisi client dengan menghapus token
 }
 
 /* ─── Express middleware ─────────────────────────────────────────────────── */

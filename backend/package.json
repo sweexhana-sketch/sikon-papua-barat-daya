@@ -15,10 +15,11 @@
   "dependencies": {
     "archiver": "^7.0.1",
     "bcryptjs": "^3.0.3",
-    "better-sqlite3": "^12.11.1",
     "cors": "^2.8.6",
     "docx": "^9.7.1",
     "express": "^4.22.2",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.22.0",
     "uuid": "^14.0.1"
   }
 }

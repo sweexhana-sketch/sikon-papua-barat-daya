@@ -23,8 +23,14 @@ app.get("*", (req, res) => {
 });
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`\n🏛  SIKON — Sistem Kontrak Otomatis Papua Barat Daya`);
-  console.log(`   Berjalan di http://localhost:${PORT}`);
-  console.log(`   Database: SQLite (data/sikon.db)\n`);
-});
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🏛  SIKON — Sistem Kontrak Otomatis Papua Barat Daya`);
+    console.log(`   Berjalan di http://localhost:${PORT}`);
+    console.log(`   Database: PostgreSQL (Neon)\n`);
+  });
+}
+
+// Export for serverless environments (e.g. Vercel)
+module.exports = app;
