@@ -104,13 +104,26 @@ async function loadStats() {
   }
 }
 
+let previewTimeout;
+function schedulePreview() {
+  clearTimeout(previewTimeout);
+  previewTimeout = setTimeout(refreshPreview, 600);
+}
+
 async function refreshPreview() {
   try {
     const p = { ...state.paket, nilai_kontrak: Number(state.paket.nilai_kontrak || 0) };
-    if (!p.nama_paket || !p.nilai_kontrak) { state.preview = null; return render(); }
-    state.preview = await api("/logic/preview", { method: "POST", body: JSON.stringify(p) });
+    if (!p.nama_paket || !p.nilai_kontrak) { 
+      state.preview = null; 
+    } else {
+      state.preview = await api("/logic/preview", { method: "POST", body: JSON.stringify(p) });
+    }
   } catch (e) { state.preview = { error: e.message }; }
-  render();
+  
+  const c1 = document.getElementById("preview-container-1");
+  if (c1) c1.innerHTML = previewPanel();
+  const c4 = document.getElementById("preview-container-4");
+  if (c4) c4.innerHTML = previewPanel();
 }
 
 async function refreshKelengkapan() {
@@ -120,7 +133,9 @@ async function refreshKelengkapan() {
     const official = state.officialId === "__new__" ? state.newOfficial : state.officials.find(o => o.id === state.officialId);
     state.kelengkapan = await api("/logic/kelengkapan", { method: "POST", body: JSON.stringify({ paket, vendor, official }) });
   } catch (e) { state.kelengkapan = { error: e.message }; }
-  render();
+  
+  const k4 = document.getElementById("kelengkapan-container-4");
+  if (k4) k4.innerHTML = kelengkapanPanel();
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -722,7 +737,7 @@ function stepPaket() {
     </div>
     ${(isKonsultansi || isJaminanKategori) ? `<div class="mt-3">${checkbox("butuh_serah_terima_lokasi", p.butuh_serah_terima_lokasi, isBarang ? "Barang perlu instalasi/serah terima di lokasi tertentu → terbitkan SPL" : isJasaLainnya ? "Layanan perlu serah terima/akses lokasi tertentu → terbitkan SPL" : "Layanan ini butuh akses/serah terima lokasi proyek → terbitkan SPL")}</div>` : ""}
 
-    ${previewPanel()}
+    <div id="preview-container-1">${previewPanel()}</div>
 
     <div class="flex justify-end mt-6">
       <button id="next1" class="px-5 py-2.5 rounded-lg bg-brand-600 text-white text-sm font-semibold hover:bg-brand-700 shadow">Lanjut ke Pejabat (PPK) →</button>
@@ -887,8 +902,8 @@ function stepGenerate() {
     <h2 class="text-lg font-semibold mb-1">4. Preview & Generate Kontrak</h2>
     <p class="text-sm text-slate-500 mb-6">Periksa ringkasan sebelum menghasilkan berkas .docx.</p>
 
-    ${previewPanel()}
-    ${kelengkapanPanel()}
+    <div id="preview-container-4">${previewPanel()}</div>
+    <div id="kelengkapan-container-4">${kelengkapanPanel()}</div>
 
     <div class="grid md:grid-cols-3 gap-4 mt-6 text-sm">
       <div class="rounded-xl border border-slate-200 p-4">
@@ -1024,7 +1039,7 @@ function bind() {
         setDeep(state.newOfficial, path.replace("newOfficial.", ""), e.target.value);
       } else {
         setDeep(state.paket, path, e.target.value);
-        if (state.step === 1) refreshPreview();
+        if (state.step === 1) schedulePreview();
       }
       if (path === "newVendor.jenis" || path === "vendor.jenis") render();
     });
