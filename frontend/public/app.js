@@ -578,7 +578,7 @@ function renderDashboard() {
                       <td class="pr-4 text-slate-600">${fmtRpShort(h.nilai_kontrak)}</td>
                       <td class="pr-4"><span class="text-xs px-2 py-1 rounded-full ${h.jenis_dokumen === "SPK" ? "bg-sea-50 text-sea-700" : "bg-brand-50 text-brand-700"}">${h.jenis_dokumen === "SPK" ? "SPK" : "Surat Perjanjian"}</span></td>
                       <td class="pr-4 text-slate-400 text-xs">${tgl}</td>
-                      <td class="text-right"><a href="${API}/contracts/${h.id}/download" class="text-brand-600 font-semibold hover:underline text-xs">Unduh ↓</a></td>
+                      <td class="text-right"><a href="${API}/contracts/${h.id}/download?token=${state.token}" class="text-brand-600 font-semibold hover:underline text-xs">Unduh ↓</a></td>
                     </tr>`;
                   }).join("")}
                 </tbody>
@@ -954,7 +954,7 @@ function stepHistory() {
             <td>${fmtRp(h.nilai_kontrak)}</td>
             <td><span class="text-xs px-2 py-1 rounded-full ${h.jenis_dokumen === "SPK" ? "bg-sea-50 text-sea-700" : "bg-brand-50 text-brand-700"}">${h.jenis_dokumen === "SPK" ? "SPK" : "Surat Perjanjian"}</span></td>
             <td>${({ harga_satuan: "Harga Satuan", lumsum: "Lumsum", waktu_penugasan: "Waktu Penugasan" })[h.jenis_kontrak] || h.jenis_kontrak}</td>
-            <td class="text-right"><a href="${API}/contracts/${h.id}/download" class="text-brand-600 font-semibold hover:underline">Unduh ↓</a></td>
+            <td class="text-right"><a href="${API}/contracts/${h.id}/download?token=${state.token}" class="text-brand-600 font-semibold hover:underline">Unduh ↓</a></td>
           </tr>`).join("")}
         </tbody>
       </table>
@@ -1105,7 +1105,7 @@ async function onGenerate() {
       body: JSON.stringify({ paket, vendor, official }),
     });
     state.lastResult = result;
-    window.location.href = API + "/contracts/" + result.contract.id + "/download";
+    window.location.href = API + "/contracts/" + result.contract.id + "/download?token=" + state.token;
     const history = await api("/contracts");
     state.history = history.reverse();
   } catch (e) {

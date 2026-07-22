@@ -67,7 +67,8 @@ function logout(token) {
 /* ─── Express middleware ─────────────────────────────────────────────────── */
 function requireAuth(req, res, next) {
   const authHeader = req.headers["authorization"] || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  let token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  if (!token && req.query.token) token = req.query.token;
   const user = verifyToken(token);
   if (!user) return res.status(401).json({ error: "Tidak terautentikasi. Silakan login." });
   req.user = user;
